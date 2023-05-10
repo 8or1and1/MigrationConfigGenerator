@@ -1,0 +1,2 @@
+terrasoft_config = {'server':'10.77.23.177', 'user':'teradev2', 'password':'P@ssw0rd', 'database':'PG_WORK'}
+elma_config = {'server':'192.168.100.201', 'port':'5432', 'user':'postgres', 'password':'pgpassword', 'database':'elma365'}
