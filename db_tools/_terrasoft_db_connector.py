@@ -16,7 +16,7 @@ class terrasoftConnector:
         except:
             pass
 
-    def select_query(self, query, columns= None):
+    def select_query(self, query, columns=None):
         data = None
         with self.connection.cursor() as cur:
             cur.execute(query)
@@ -26,6 +26,13 @@ class terrasoftConnector:
 
     def get_table_names(self):
         query = "select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME;"
+        columns_dataframe = self.select_query(query)
+        y = [row[0] for index, row in columns_dataframe.iterrows()]
+        return y
+
+    def get_column_names(self, table_name):
+        query = "SELECT column_name, column_default, data_type FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'tbl_{}'".format(
+            table_name)
         columns_dataframe = self.select_query(query)
         y = [row[0] for index, row in columns_dataframe.iterrows()]
         return y

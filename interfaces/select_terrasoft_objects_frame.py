@@ -35,10 +35,13 @@ class SelectTerrasoftObjectFrame:
         next_button = ttk.Button(terrasoft_object_frame, text='Далее',
                                  command=lambda: self.get_checked_objects(next_button, [new_tables[x] for x in tree.get_checked()]))
         next_button.pack()
-
         terrasoft_object_frame.pack(expand=True,fill=BOTH)
+        if self.debug:
+            next_button.invoke()
 
     def get_checked_objects(self, button, tables):
+        if self.debug:
+            tables = ['Currency', 'CurrencyRate', 'CurrencyRateRight']
         mapping_main_frame = mmf.MappingMainFrame(self.backend, self.root, tables, self.debug)
         button.master.destroy()
         mapping_main_frame.get_mapping_main_frame()

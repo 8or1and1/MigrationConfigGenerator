@@ -12,16 +12,35 @@ class MappingMainFrame:
         self.terrasoft_objects = terrasoft_objects
         self.debug = debug
         self.mapped_objects = []
+        self.elma_full_apps = self.backend.elma_worker.get_apps()
 
     def get_mapping_main_frame(self):
         mapping_main_frame = ttk.Frame()
+        elma_apps = [x['code'] for x in self.elma_full_apps]
+        row = 0
+        picked_elma_apps = []
         for x in self.terrasoft_objects:
-            button = ttk.Button(mapping_main_frame, text=x, command=lambda: self.click(button, x))
-            button.pack(anchor=CENTER, expand=1)
+            label = ttk.Label(mapping_main_frame, text=x)
+            label.grid(row=row, column=0)
+            picked_elma_apps.append(StringVar(value=elma_apps[0]))
+            combobox = ttk.Combobox(mapping_main_frame, values=elma_apps, textvariable=picked_elma_apps[row])
+            combobox.grid(row=row, column=1)
+            button = ttk.Button(mapping_main_frame, text=x)
+            button['command'] = lambda button=button, x=x, row=row: self.click(button, x, row)
+            button.grid(row=row, column=2)
+            row += 1
         mapping_main_frame.pack(expand=True, fill=BOTH)
 
-    def click(self, button, object_name):
+    def get_elma_app_parameters_by_name(self, app_code):
+        for x in self.elma_full_apps:
+            if x['code'] == app_code:
+                return x
+
+    def click(self, button, object_name, row):
         style = ttk.Style()
         style.configure('Green.TButton', foreground='green')
         button.configure(style='Green.TButton', text=object_name, command=None)
-        mmf = MappingMiniFrame(self.backend, self.debug)
+        elma_params = self.get_elma_app_parameters_by_name(
+            button.master.children['!combobox' + ('' if row == 0 else str(row+1))].get())
+        mmf = MappingMiniFrame(self.backend, object_name, elma_params, self.debug)
+        mmf.get_mapping_mini_frame()
