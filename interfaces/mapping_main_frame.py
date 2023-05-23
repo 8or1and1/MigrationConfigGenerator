@@ -1,7 +1,9 @@
+import json
 from tkinter import *
 from tkinter import ttk
 from interfaces.mapping_mini_frame import MappingMiniFrame
 import config
+import shelve
 
 
 class MappingMainFrame:
@@ -29,6 +31,8 @@ class MappingMainFrame:
             button['command'] = lambda button=button, x=x, row=row: self.click(button, x, row)
             button.grid(row=row, column=2)
             row += 1
+        generate_button = ttk.Button(mapping_main_frame, text='Собрать конфиг', command=self.generate)
+        generate_button.grid(row=row, column=0, columnspan=3)
         mapping_main_frame.pack(expand=True, fill=BOTH)
 
     def get_elma_app_parameters_by_name(self, app_code):
@@ -44,3 +48,13 @@ class MappingMainFrame:
             button.master.children['!combobox' + ('' if row == 0 else str(row+1))].get())
         mmf = MappingMiniFrame(self.backend, object_name, elma_params, self.debug)
         mmf.get_mapping_mini_frame()
+
+    def generate(self):
+        config_dict = {}
+        with shelve.open(config.SHELVE_NAME) as config_shelve:
+            for key in config_shelve.keys():
+                config_dict[key] = config_shelve[key]
+        config_json = json.dumps(config_dict)
+        with open('config.json', 'w') as outfile:
+            outfile.write(config_json)
+        print(config_json)

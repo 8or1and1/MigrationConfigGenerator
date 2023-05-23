@@ -3,5 +3,5 @@ from db_tools.db_worker import db_worker
 
 backend = db_worker()
 
-main_frame = BeginFrame(backend, True)
+main_frame = BeginFrame(backend, False)
 main_frame.root.mainloop()

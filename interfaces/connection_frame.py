@@ -20,16 +20,19 @@ class ConnectionFrame:
         incorrect_label = ttk.Label(connection_frame)
         incorrect_label.grid(row=3, column=0)
 
-        proceed_button = ttk.Button(connection_frame, text='Далее', command=lambda: self.proceed(proceed_button, incorrect_label))
+        proceed_button = ttk.Button(connection_frame, text='Собрать конфиг', command=lambda: self.proceed(proceed_button, incorrect_label))
         proceed_button.grid(row=4,column=0)
+
+        migrate_button = ttk.Button(connection_frame, text='Мигрировать', command=lambda: self.proceed(proceed_button, incorrect_label))
         connection_frame.pack(expand=True, fill=BOTH)
 
-        if self.debug:
-            proceed_button.invoke()
+        # if self.debug:
+        #     proceed_button.invoke()
 
     def proceed(self, button: ttk.Button, label: ttk.Label):
         if self.backend.terrasoft_worker.connection and self.backend.elma_worker.connection:
             button.master.destroy()
+            # if
             terrasoft_object_frame = stof.SelectTerrasoftObjectFrame(self.backend, self.root, self.debug)
             terrasoft_object_frame.get_select_terrasoft_object_frame()
         else:
@@ -90,7 +93,7 @@ class ConnectionFrame:
         self.elma_config = {key:StringVar(value=value) for (key, value) in config.elma_config.items()}
         elma_frame = ttk.Frame(parent, borderwidth=2, relief=SOLID)
 
-        label = ttk.Label(elma_frame, text='elma 3x')
+        label = ttk.Label(elma_frame, text='elma365')
         label.pack(anchor=NW)
 
         elma_data_frame = ttk.Frame(elma_frame)

@@ -10,7 +10,6 @@ class elmaConnector:
         try:
             self.connection = psycopg2.connect(dbname=config['database'],
                                                user=config['user'],
-                                               # user='pidoras',
                                                password=config['password'],
                                                host=config['server'],
                                                port=config['port'])
@@ -29,13 +28,13 @@ class elmaConnector:
         return records_smaller
 
     def get_columns(self, namespace, code):
-        records_smaller = []
+        useful_system_columns = ['__name', '__id', '__createdAt', '__updatedAt']
         with self.connection.cursor(cursor_factory=NamedTupleCursor) as cur:
-            cur.execute("SELECT fields FROM head.appviews")
+            cur.execute(
+                'SELECT fields FROM head.appviews where namespace=\'{}\' and code=\'{}\''.format(namespace, code))
             records = cur.fetchall()
-            for record in records:
-                record_small = {'code': record.code, 'namespace': record.namespace,
-                                'name': record.name}  # , 'fields':record.fields }
-                records_smaller.append(record_small)
-        return records_smaller
 
+            columns = [{'code': x['code'], 'type': x['type'], 'single': x['single']} for x in records[0].fields if
+                       x['code'] in useful_system_columns or '__' not in x['code']]
+
+        return columns
